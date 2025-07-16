@@ -8,6 +8,10 @@ The backend is implemented using Next.js API routes, with local JSON files as st
 
 ## Getting Started
 
+### Personal Documentation
+
+[Google Docs.](https://docs.google.com/document/d/18Kx4kuT3WMud1KfYBvUClka2sNp2oKzul4F4C7Agviw/edit?usp=sharing)
+
 ### 1. Install Dependencies
 
 Before running the app, make sure you have **Node.js** installed.
