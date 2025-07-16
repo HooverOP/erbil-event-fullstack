@@ -1,36 +1,105 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Erbil Event Registration System
+
+This is a [Next.js](https://nextjs.org) full-stack application built for registering participants in events held in Erbil. It includes a landing page that lists events, a registration form, and an admin view for registered participants.
+
+The backend is implemented using Next.js API routes, with local JSON files as storage for simplicity.
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### 1. Install Dependencies
+
+Before running the app, make sure you have **Node.js** installed.
+
+Then install the required packages:
+
+```bash
+npm install
+```
+
+This step is required the **first time** you run the project or whenever new dependencies are added.
+
+---
+
+## How to Run the Frontend
+
+To start the frontend and backend (handled together in Next.js), run:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This will start the development server on:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+> http://localhost:3000
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+You can open this URL in your browser to use the app.
+
+---
+
+## How to Run the Backend
+
+The backend API is powered by Next.js API routes located under `/app/api`.
+
+Since this is a unified full-stack app, running `npm run dev` will also start the backend.
+
+By default, all API routes are available under:
+
+> http://localhost:3000/api/
+
+For example:
+
+- GET events → `http://localhost:3000/api/events`
+- POST registration → `http://localhost:3000/api/register`
+- GET registered users → `http://localhost:3000/api/registered`
+
+No separate port is required.
+
+---
+
+## Folder Structure
+
+```bash
+/app
+  ├── page.tsx                 # Landing page (events list)
+  ├── register/page.tsx        # Registration form
+  ├── participants/page.tsx    # Registered participants list
+  └── api
+      ├── events/route.ts      # GET /api/events
+      ├── register/route.ts    # POST /api/register
+      └── registered/route.ts  # GET /api/registered
+
+/lib
+  └── db.ts                    # Logic to read/write JSON files
+
+/types
+  └── index.ts                 # TypeScript types
+
+/data
+  └── events.json              # Sample events
+  └── registered.json          # Registered users
+```
+
+---
+
+## Developer
+
+**Name:** Vache Aqob
+
+---
 
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+To learn more about Next.js:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Learn Next.js](https://nextjs.org/learn)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+You can deploy this project using [Vercel](https://vercel.com), which is the recommended way to host Next.js apps.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+More deployment info: [Deploying Next.js](https://nextjs.org/docs/app/building-your-application/deploying)
