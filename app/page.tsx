@@ -65,7 +65,7 @@ export default function Home() {
       </div>
       <div className="mb-8 text-center">
         <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          Events Available
+          Events Available HAHA
         </h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
           Discover and register for exciting events. Browse through our curated
