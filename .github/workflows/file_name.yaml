@@ -11,4 +11,4 @@ jobs:
       - name: Print message
         run: echo "Hello, this is a message from the eers workflow!"
       - name: Fetch GitHub username
-        run: echo "My name is $name"
+        run: echo "My name is $NAME"
