@@ -2,7 +2,7 @@ name: eers
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   message:
