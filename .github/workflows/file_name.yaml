@@ -9,4 +9,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Fetch GitHub username
-        run: echo "My name is ${{ vars.NAME }}"
+        run: echo "My name is ${{ vars.REAL_NAME }}"
