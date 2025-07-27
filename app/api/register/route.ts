@@ -1,4 +1,4 @@
-import { saveRegistred } from "@/lib/db";
+import { saveRegistered } from "@/lib/db";
 import { RegistrationForm } from "@/types";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
       );
     }
     try {
-      const registered = saveRegistred(body);
+      const registered = saveRegistered(body);
 
       return NextResponse.json(
         { message: "Registration successful.", registered },
