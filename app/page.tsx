@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Event } from "@/types";
 import { Loader2 } from "lucide-react";
 import EventCard from "@/components/events/event-card";
+import { supabase } from "@/lib/supabase";
 
 export default function Home() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -16,17 +17,12 @@ export default function Home() {
 
   const fetchEvents = async () => {
     try {
-      const response = await fetch("/api/events");
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch events");
-      }
-
-      const data = await response.json();
+      const { data, error } = await supabase.from("events").select("*");
+      if (error) throw error;
       setEvents(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load events.");
-      console.log(err);
+      console.error(err);
     } finally {
       setLoading(false);
     }

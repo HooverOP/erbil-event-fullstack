@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Loader2, Users, Mail, Calendar } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 export default function ParticipantsPage() {
   const [registrations, setRegistrations] = useState<Registered[]>([]);
@@ -25,9 +26,8 @@ export default function ParticipantsPage() {
 
   const fetchEvents = async () => {
     try {
-      const response = await fetch("/api/events");
-      if (!response.ok) throw new Error("Failed to fetch events");
-      const data = await response.json();
+      const { data, error } = await supabase.from("events").select("*");
+      if (error) throw error;
       setEvents(data);
     } catch (err) {
       console.error("Failed to fetch events:", err);
@@ -36,12 +36,26 @@ export default function ParticipantsPage() {
 
   const fetchRegistrations = async () => {
     try {
-      const response = await fetch("/api/registered");
-      if (!response.ok) throw new Error("Failed to fetch registrations");
-      const data = await response.json();
-      setRegistrations(data);
+      const { data, error } = await supabase
+        .from("registrations")
+        .select("*")
+        .order("registration_date", { ascending: false });
+
+      if (error) throw error;
+
+      // Map snake_case to camelCase:
+      const camelCaseData = data.map((item) => ({
+        id: item.id,
+        fullName: item.full_name,
+        email: item.email,
+        eventId: item.event_id,
+        registrationDate: item.registration_date,
+      }));
+
+      setRegistrations(camelCaseData);
     } catch (err) {
       setError("Failed to load registrations");
+      console.error(err);
     } finally {
       setLoading(false);
     }

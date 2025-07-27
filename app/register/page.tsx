@@ -6,6 +6,7 @@ import { Event, RegistrationForm } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { supabase } from "@/lib/supabase";
 import {
   Select,
   SelectContent,
@@ -21,6 +22,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { CheckCircle, Loader2 } from "lucide-react";
+import { saveRegistered } from "@/lib/db";
 export default function RegisterPage() {
   const searchParams = useSearchParams();
   const preSelectedEventId = searchParams.get("eventId");
@@ -48,12 +50,12 @@ export default function RegisterPage() {
 
   const fetchEvents = async () => {
     try {
-      const response = await fetch("/api/events");
-      if (!response.ok) throw new Error("Failed to fetch events");
-      const data = await response.json();
+      const { data, error } = await supabase.from("events").select("*");
+      if (error) throw error;
       setEvents(data);
     } catch (err) {
       setError("Failed to load events");
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -65,31 +67,16 @@ export default function RegisterPage() {
     setError(null);
 
     try {
-      const response = await fetch("/api/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        setIsSuccess(true);
-        setFormData({ fullName: "", email: "", eventId: "" });
-      } else {
-        // Handle different error types
-        if (response.status === 409) {
-          setError(
-            result.error || "You have already registered for this event"
-          );
-        } else {
-          setError(result.error || "Registration failed");
-        }
-      }
-    } catch (err) {
-      setError("An error occurred during registration");
+      await saveRegistered(formData); // ← direct DB insert
+      setIsSuccess(true);
+      setFormData({ fullName: "", email: "", eventId: "" });
+    } catch (err: any) {
+      const message =
+        err.message?.includes("already registered") ||
+        err.message?.includes("duplicate")
+          ? "You have already registered for this event"
+          : err.message || "Registration failed";
+      setError(message);
     } finally {
       setIsSubmitting(false);
     }

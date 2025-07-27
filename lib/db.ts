@@ -1,55 +1,61 @@
-import path from "path";
-import fs from "fs";
+// lib/db.ts
+import { supabase } from "./supabase";
 import { Registered } from "@/types";
 
-const eventsPath = path.join(process.cwd(), "data", "events.json");
-const registeredPath = path.join(process.cwd(), "data", "registered.json");
-
-// simple way to fetch data
-export function getEvents() {
-  try {
-    const data = fs.readFileSync(eventsPath, "utf-8");
-    return JSON.parse(data);
-  } catch (error) {
-    console.error("Error reading events file:", error);
+// ✅ Fetch all events
+export async function getEvents() {
+  const { data, error } = await supabase.from("events").select("*");
+  if (error) {
+    console.error("Error fetching events:", error.message);
     return [];
   }
+  return data;
 }
 
-export function getRegistered() {
-  try {
-    const data = fs.readFileSync(registeredPath, "utf-8");
-    return JSON.parse(data);
-  } catch (error) {
-    console.error("Error reading registered file:", error);
+// ✅ Fetch all registrations
+export async function getRegistered() {
+  const { data, error } = await supabase
+    .from("registrations")
+    .select("id, full_name, email, event_id, registration_date");
+
+  if (error) {
+    console.error("Error fetching registrations:", error.message);
     return [];
   }
+
+  console.log("Fetched registrations:", data); // 👈 add this
+  return data;
 }
 
-// advanced way to save data (checks for dupes)
-export function saveRegistred(
+// ✅ Save registration (auto handles duplicate via DB constraint)
+export async function saveRegistered(
   registered: Omit<Registered, "id" | "registrationDate">
-): Registered {
-  try {
-    const registeredData = getRegistered();
-    const newRegistration = {
-      ...registered,
-      id: crypto.randomUUID(),
-      registrationDate: new Date().toISOString(),
-    };
-    const existingRegistered = registeredData.find(
-      (reg: { email: string; eventId: string }) =>
-        reg.email === newRegistration.email.toLocaleLowerCase() &&
-        reg.eventId === newRegistration.eventId
-    );
-    if (existingRegistered) {
+): Promise<Registered> {
+  const { data, error } = await supabase
+    .from("registrations")
+    .insert([
+      {
+        full_name: registered.fullName,
+        email: registered.email.toLowerCase(),
+        event_id: registered.eventId,
+      },
+    ])
+    .select()
+    .single(); // Return the inserted row
+
+  if (error) {
+    if (error.message.includes("duplicate key")) {
       throw new Error("You have already registered for this event.");
     }
-    registeredData.push(newRegistration);
-    fs.writeFileSync(registeredPath, JSON.stringify(registeredData, null, 2));
-    return newRegistration;
-  } catch (error) {
-    console.error("Error saving registration:", error);
-    throw new Error("Failed to save registration");
+    console.error("Error saving registration:", error.message);
+    throw new Error("Failed to save registration.");
   }
+
+  return {
+    id: data.id,
+    fullName: data.full_name,
+    email: data.email,
+    eventId: data.event_id,
+    registrationDate: data.registration_date,
+  };
 }
