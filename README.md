@@ -107,3 +107,5 @@ To learn more about Next.js:
 You can deploy this project using [Vercel](https://vercel.com), which is the recommended way to host Next.js apps.
 
 More deployment info: [Deploying Next.js](https://nextjs.org/docs/app/building-your-application/deploying)
+
+Suggetions are accepeted
